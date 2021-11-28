@@ -1,0 +1,11 @@
+version: '3'
+services:
+  juand-graphql:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8093
+    volumes:
+    - .:/EMeteorologica
+    ports:
+    - "8093:8093"
+    env_file:
+      - .env
