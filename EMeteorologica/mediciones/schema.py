@@ -1,6 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from users.schema import UserType
+from django.db.models import Q
 
 from .models import Medicion
 
@@ -10,9 +11,15 @@ class MedicionType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    mediciones = graphene.List(MedicionType)
+    mediciones = graphene.List(MedicionType, search=graphene.String())
 
-    def resolve_mediciones(self, info, **kwargs):
+    def resolve_mediciones(self, info, search=None, **kwargs):
+        if search:
+            filter = (
+                Q(Fecha__icontains=search)
+            )        
+            return Medicion.objects.filter(filter)
+
         return Medicion.objects.all()
 
 class CreateMedicion(graphene.Mutation):
